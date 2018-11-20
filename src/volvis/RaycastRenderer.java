@@ -23,12 +23,15 @@ import volume.Volume;
  */
 public class RaycastRenderer extends Renderer implements TFChangeListener {
 
+    public enum RaycasterType {Slicer, MIP, Compositing, Transfer2D};
+
     private Volume volume = null;
     private GradientVolume gradients = null;
     RaycastRendererPanel panel;
     TransferFunction tFunc;
     TransferFunctionEditor tfEditor;
     TransferFunction2DEditor tfEditor2D;
+    public RaycasterType raycasterType = RaycasterType.Slicer;
     
     public RaycastRenderer() {
         panel = new RaycastRendererPanel(this);
