@@ -12,6 +12,8 @@ import gui.RaycastRendererPanel;
 import gui.TransferFunction2DEditor;
 import gui.TransferFunctionEditor;
 import java.awt.image.BufferedImage;
+
+import util.Interpolation;
 import util.TFChangeListener;
 import util.VectorMath;
 import volume.GradientVolume;
@@ -84,26 +86,41 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
      
 
     short getVoxel(double[] coord) {
+        return getVoxel(
+                (int) Math.floor(coord[0]),
+                (int) Math.floor(coord[1]),
+                (int) Math.floor(coord[2])
+        );
+    }
 
-        if (coord[0] < 0 || coord[0] > volume.getDimX() || coord[1] < 0 || coord[1] > volume.getDimY()
-                || coord[2] < 0 || coord[2] > volume.getDimZ()) {
+    short getVoxel(int x, int y, int z) {
+
+        if (x < 0 || x >= volume.getDimX() || y < 0 || y >= volume.getDimY()
+                || z < 0 || z >= volume.getDimZ()) {
             return 0;
         }
-
-        int x = (int) Math.floor(coord[0]);
-        int y = (int) Math.floor(coord[1]);
-        int z = (int) Math.floor(coord[2]);
 
         return volume.getVoxel(x, y, z);
     }
 
-    short interpVoxels(double[] coord) {
+
+
+    double interpVoxels(double[] coord) {
         // Find the eight surrounding points
-        // x1 = floor(x)
-        // x2 = ceil(x)
-        // ...
-        // trilerp(coord[0], coord[1], ... , getVoxel(x1, y1, z1), getVoxel(x1, y1, z2), ..., x1, x2, ...)
-        return 1;
+        int x0 = (int) Math.floor(coord[0]);
+        int x1 = (int) Math.ceil(coord[0]);
+        int y0 = (int) Math.floor(coord[1]);
+        int y1 = (int) Math.ceil(coord[1]);
+        int z0 = (int) Math.floor(coord[2]);
+        int z1 = (int) Math.ceil(coord[2]);
+
+        // Interpolate
+        return Interpolation.triLerp(
+                coord[0], coord[1], coord[2],
+                getVoxel(x0, y0, z0), getVoxel(x0, y0, z1), getVoxel(x0, y1, z0), getVoxel(x0, y1, z1),
+                getVoxel(x1, y0, z0), getVoxel(x1, y0, z1), getVoxel(x1, y1, z0), getVoxel(x1, y1, z1),
+                x0, x1, y0, y1, z0, z1
+        );
     }
 
     void mip(double[] viewMatrix) {
