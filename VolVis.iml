@@ -12,5 +12,7 @@
     <orderEntry type="library" name="jogl" level="project" />
     <orderEntry type="library" name="jtransforms-2.3" level="project" />
     <orderEntry type="library" name="appframework-1.0.3" level="project" />
+    <orderEntry type="library" name="appframework-1.0.3" level="project" />
+    <orderEntry type="library" name="gluegen" level="project" />
   </component>
 </module>
