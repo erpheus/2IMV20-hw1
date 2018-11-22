@@ -27,4 +27,12 @@ public class TFColor {
         String text = "(" + r + ", " + g + ", " + b + ", " + a + ")";
         return text;
     }
+
+    public void composite(TFColor newColor) {
+
+        r = newColor.a * newColor.r + ((1-newColor.a) * r);
+        b = newColor.a * newColor.b + ((1-newColor.a) * b);
+        g = newColor.a * newColor.g + ((1-newColor.a) * g);
+
+    }
 }

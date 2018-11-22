@@ -61,7 +61,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         
         // uncomment this to initialize the TF with good starting values for the orange dataset 
         tFunc.setTestFunc();
-        
+
         
         tFunc.addTFChangeListener(this);
         tfEditor = new TransferFunctionEditor(tFunc, volume.getHistogram());
@@ -155,27 +155,30 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 double k = -1 * (maximumSteps / 2);
                 double totalIntensity = 0;
                 double [] maximumCoord = new double[3];
+
+                TFColor voxelColor = new TFColor(0,0,0,1);
+                TFColor currentVoxelColor = null;
                 while(k <= maximumSteps/2) {//Math.max(volume.getDimX(), Math.max(volume.getDimY(), volume.getDimZ()))) {
                     pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + volumeCenter[0] + k*viewVec[0];
                     pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + volumeCenter[1] + k*viewVec[1];
                     pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + volumeCenter[2] + k*viewVec[2];
                     k++;
                     double val = interpVoxels(pixelCoord);
-                    totalIntensity += val;
+                    currentVoxelColor = tFunc.getColor((int)(val));
+                    voxelColor.composite(currentVoxelColor);
                 }
 //                System.out.println("" + maximumCoord);
 
-                TFColor voxelColor = new TFColor();
-                double val = totalIntensity;
+//                double val = totalIntensity;
 
                 // Map the intensity to a grey value by linear scaling
-                voxelColor.r = val/max;
-                voxelColor.g = voxelColor.r;
-                voxelColor.b = voxelColor.r;
-                voxelColor.a = val > 0 ? 1.0 : 0.0;  // this makes intensity 0 completely transparent and the rest opaque
+//                voxelColor.r = val/max;
+//                voxelColor.g = voxelColor.r;
+//                voxelColor.b = voxelColor.r;
+//                voxelColor.a = val > 0 ? 1.0 : 0.0;  // this makes intensity 0 completely transparent and the rest opaque
 //                 Alternatively, apply the transfer function to obtain a color
 //                tFunc.setTestFunc();
-//                 voxelColor = tFunc.getColor((int)(val));
+//                System.out.println("" + val);
 
 
                 // BufferedImage expects a pixel color packed as ARGB in an int
