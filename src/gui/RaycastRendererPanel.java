@@ -133,22 +133,22 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void mipButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mipButtonActionPerformed
-        renderer.raycasterType = RaycastRenderer.RaycasterType.MIP;
+        renderer.setRenderer(RaycastRenderer.RaycasterType.MIP);
         renderer.changed();
     }//GEN-LAST:event_mipButtonActionPerformed
 
     private void slicerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_slicerButtonActionPerformed
-        renderer.raycasterType = RaycastRenderer.RaycasterType.Slicer;
+        renderer.setRenderer(RaycastRenderer.RaycasterType.Slicer);
         renderer.changed();
     }//GEN-LAST:event_slicerButtonActionPerformed
 
     private void compositingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compositingButtonActionPerformed
-        renderer.raycasterType = RaycastRenderer.RaycasterType.Compositing;
+        renderer.setRenderer(RaycastRenderer.RaycasterType.Compositing);
         renderer.changed();
     }//GEN-LAST:event_compositingButtonActionPerformed
 
     private void tf2dButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tf2dButtonActionPerformed
-        renderer.raycasterType = RaycastRenderer.RaycasterType.Transfer2D;
+        renderer.setRenderer(RaycastRenderer.RaycasterType.Transfer2D);
         renderer.changed();
     }//GEN-LAST:event_tf2dButtonActionPerformed
 
