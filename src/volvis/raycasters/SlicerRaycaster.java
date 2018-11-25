@@ -5,14 +5,17 @@ import volvis.TFColor;
 public class SlicerRaycaster extends BaseRaycaster {
 
     @Override
-    public void cast(double[] viewMatrix) {
-        castSetUp(viewMatrix);
+    protected int displacementForRunningTime(long lastRunningTime, int lastDisplacement) {
+        return 1;
+    }
 
+    @Override
+    public void internal_cast(double[] viewMatrix) {
         double[] pixelCoord = new double[3];
         TFColor voxelColor = new TFColor();
 
-        for (int j = 0; j < image.getHeight(); j++) {
-            for (int i = 0; i < image.getWidth(); i++) {
+        for (int j = displacement/2; j < image.getHeight(); j+= displacement) {
+            for (int i = displacement/2; i < image.getWidth(); i+= displacement) {
                 pixelCoord[0] = uVec[0] * (i - image_half) + vVec[0] * (j - image_half)
                         + volumeCenter[0];
                 pixelCoord[1] = uVec[1] * (i - image_half) + vVec[1] * (j - image_half)
@@ -36,7 +39,7 @@ public class SlicerRaycaster extends BaseRaycaster {
                 int c_green = voxelColor.g <= 1.0 ? (int) Math.floor(voxelColor.g * 255) : 255;
                 int c_blue = voxelColor.b <= 1.0 ? (int) Math.floor(voxelColor.b * 255) : 255;
                 int pixelColor = (c_alpha << 24) | (c_red << 16) | (c_green << 8) | c_blue;
-                image.setRGB(i, j, pixelColor);
+                setPixelRegion(i, j, pixelColor);
             }
         }
     }
