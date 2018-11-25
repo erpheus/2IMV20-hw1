@@ -4,14 +4,19 @@ import gui.TransferFunction2DEditor;
 import util.Interpolation;
 import util.VectorMath;
 import volume.Volume;
+import volvis.TFColor;
 import volvis.TransferFunction;
 
 import java.awt.image.BufferedImage;
 
-public class BaseRaycaster {
+public abstract class BaseRaycaster {
     protected BufferedImage image;
     protected Volume volume;
     TransferFunction tFunc;
+    int displacement = 1;
+    long lastRunningTime;
+
+    protected static double TARGET_RENDERING_TIME = 1000.0 / 15; // 15 fps
     TransferFunction2DEditor tfEditor2D;
 
 
@@ -50,14 +55,52 @@ public class BaseRaycaster {
         volume_max = volume.getMaximum();
     }
 
-    public void cast(double[] viewMatrix) {
-        throw new Error("not implemented");
+    private void calcDisplacement(boolean interactiveMode) {
+        if (interactiveMode) {
+            displacement = displacementForRunningTime(lastRunningTime, displacement);
+        } else {
+            displacement = 1;
+        }
     }
 
-    protected void clearImage() {
+    protected abstract int displacementForRunningTime(long lastRunningTime, int lastDisplacement);
+
+    public double cast(double[] viewMatrix, boolean interactiveMode) {
+        calcDisplacement(interactiveMode);
+
+        long startTime = System.currentTimeMillis();
+
+        castSetUp(viewMatrix);
+        internal_cast(viewMatrix);
+
+        long endTime = System.currentTimeMillis();
+        lastRunningTime = (endTime - startTime);
+        return (double) lastRunningTime;
+    }
+
+    public abstract void internal_cast(double[] viewMatrix);
+
+    private void clearImage() {
         for (int j = 0; j < image.getHeight(); j++) {
             for (int i = 0; i < image.getWidth(); i++) {
                 image.setRGB(i, j, 0);
+            }
+        }
+    }
+
+    protected void setPixelRegion(int i, int j, int pixelColor) {
+        if (displacement == 1) {
+            image.setRGB(i, j, pixelColor);
+        } else {
+            int centering = displacement/2;
+            int min_i = Math.max(-centering + i, 0);
+            int min_j = Math.max(-centering + j, 0);
+            int max_i = Math.min(displacement - centering + i, image.getWidth());
+            int max_j = Math.min(displacement - centering + j, image.getWidth());
+            for (int real_i = min_i; real_i < max_i; real_i++) {
+                for (int real_j = min_j; real_j < max_j; real_j++) {
+                    image.setRGB(real_i, real_j, pixelColor);
+                }
             }
         }
     }

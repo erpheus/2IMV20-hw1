@@ -184,12 +184,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
         gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, viewMatrix, 0);
 
-        long startTime = System.currentTimeMillis();
+        double runningTime =  raycaster.cast(viewMatrix, interactiveMode);
 
-        raycaster.cast(viewMatrix);
-
-        long endTime = System.currentTimeMillis();
-        double runningTime = (endTime - startTime);
         panel.setSpeedLabel(Double.toString(runningTime));
 
         Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(), image, false);
