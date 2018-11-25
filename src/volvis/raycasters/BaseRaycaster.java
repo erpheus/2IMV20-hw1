@@ -1,5 +1,6 @@
 package volvis.raycasters;
 
+import gui.TransferFunction2DEditor;
 import util.Interpolation;
 import util.VectorMath;
 import volume.Volume;
@@ -11,16 +12,19 @@ public class BaseRaycaster {
     protected BufferedImage image;
     protected Volume volume;
     TransferFunction tFunc;
+    TransferFunction2DEditor tfEditor2D;
+
 
     // Common calculation variables
     double[] viewVec, uVec, vVec, volumeCenter;
     double volume_max;
     int image_half;
 
-    public void setUp(Volume new_volume, BufferedImage new_image, TransferFunction new_tFunc) {
+    public void setUp(Volume new_volume, BufferedImage new_image, TransferFunction new_tFunc, TransferFunction2DEditor tfEditor2D) {
         volume = new_volume;
         image = new_image;
         tFunc = new_tFunc;
+        this.tfEditor2D = tfEditor2D;
     }
 
     void castSetUp(double[] viewMatrix) {

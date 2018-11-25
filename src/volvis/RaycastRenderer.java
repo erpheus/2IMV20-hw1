@@ -14,10 +14,7 @@ import gui.TransferFunctionEditor;
 import util.TFChangeListener;
 import volume.GradientVolume;
 import volume.Volume;
-import volvis.raycasters.BaseRaycaster;
-import volvis.raycasters.CompositionRaycaster;
-import volvis.raycasters.MIPRaycaster;
-import volvis.raycasters.SlicerRaycaster;
+import volvis.raycasters.*;
 
 import java.awt.image.BufferedImage;
 
@@ -66,13 +63,15 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         // uncomment this to initialize the TF with good starting values for the orange dataset 
         tFunc.setTestFunc();
 
-        raycaster.setUp(volume, image, tFunc);
+
         
         tFunc.addTFChangeListener(this);
         tfEditor = new TransferFunctionEditor(tFunc, volume.getHistogram());
         
         tfEditor2D = new TransferFunction2DEditor(volume, gradients);
         tfEditor2D.addTFChangeListener(this);
+
+        raycaster.setUp(volume, image, tFunc, tfEditor2D);
 
         System.out.println("Finished initialization of RaycastRenderer");
     }
@@ -93,12 +92,13 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
                 break;
 
             case Transfer2D:
+                raycaster = new TransferFunction2DRayCaster();
                 break;
 
             default:
                 return;
         }
-        raycaster.setUp(volume, image, tFunc);
+        raycaster.setUp(volume, image, tFunc, tfEditor2D);
     }
 
     public RaycastRendererPanel getPanel() {
