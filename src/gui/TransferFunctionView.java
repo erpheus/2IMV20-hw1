@@ -188,7 +188,7 @@ public class TransferFunctionView extends javax.swing.JPanel {
             tfunc.updateControlPointAlpha(selected, a);
             editor.setSelectedInfo(selected, s, a, controlPoints.get(selected).color);
             repaint();
-
+            tfunc.changed();
         }
     }
 

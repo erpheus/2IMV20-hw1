@@ -13,6 +13,7 @@ import util.TFChangeListener;
 import volume.GradientVolume;
 import volume.Volume;
 import volume.VoxelGradient;
+import volvis.Renderer;
 import volvis.TFColor;
 
 /**
@@ -30,11 +31,13 @@ public class TransferFunction2DEditor extends javax.swing.JPanel {
     private short maxIntensity;
     public double maxGradientMagnitude;
     private ArrayList<TFChangeListener> listeners = new ArrayList<TFChangeListener>();
+    private Renderer renderer;
 
     
-    public TransferFunction2DEditor(Volume volume, GradientVolume gradientvolume) {
+    public TransferFunction2DEditor(Volume volume, GradientVolume gradientvolume, Renderer renderer) {
         initComponents();
 
+        this.renderer = renderer;
         this.vol = volume;
         this.gradvol = gradientvolume;
         compute2Dhistogram();
@@ -258,6 +261,7 @@ public class TransferFunction2DEditor extends javax.swing.JPanel {
 
     private void colorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorButtonActionPerformed
         // TODO add your handling code here:
+        renderer.setInteractiveMode(true);
         Color newColor = JColorChooser.showDialog(this, "Choose color", colorButton.getBackground());
         if (newColor != null) {
             colorButton.setBackground(newColor);
@@ -266,6 +270,7 @@ public class TransferFunction2DEditor extends javax.swing.JPanel {
             triangleWidget.color.b = newColor.getBlue() / 255.0;
             changed();
         }
+        renderer.setInteractiveMode(false);
     }//GEN-LAST:event_colorButtonActionPerformed
 
     private void opacityLabelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_opacityLabelActionPerformed

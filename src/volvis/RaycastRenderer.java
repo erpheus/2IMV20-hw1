@@ -65,10 +65,18 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
 
         
+        tFunc.addTFChangeListener(() -> {
+            setInteractiveMode(true);
+            setInteractiveMode(false);
+        });
         tFunc.addTFChangeListener(this);
-        tfEditor = new TransferFunctionEditor(tFunc, volume.getHistogram());
+        tfEditor = new TransferFunctionEditor(tFunc, volume.getHistogram(), this);
         
-        tfEditor2D = new TransferFunction2DEditor(volume, gradients);
+        tfEditor2D = new TransferFunction2DEditor(volume, gradients, this);
+        tfEditor2D.addTFChangeListener(() -> {
+            setInteractiveMode(true);
+            setInteractiveMode(false);
+        });
         tfEditor2D.addTFChangeListener(this);
 
         raycaster.setUp(volume, image, tFunc, tfEditor2D);
@@ -77,6 +85,8 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     }
 
     public void setRenderer(RaycasterType new_raycaster_type) {
+        interactiveMode = false;
+        debouncer.cancel();
         raycaster_type = new_raycaster_type;
         switch (raycaster_type) {
             case Slicer:

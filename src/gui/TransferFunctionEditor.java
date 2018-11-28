@@ -7,6 +7,8 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JColorChooser;
+
+import volvis.Renderer;
 import volvis.TFColor;
 import volvis.TransferFunction;
 
@@ -19,11 +21,13 @@ public class TransferFunctionEditor extends javax.swing.JPanel {
     private TransferFunction tfunc;
     private TransferFunctionView tfView;
     private int selected;
+    private Renderer renderer;
 
     /**
      * Creates new form TransferFunctionEditor
      */
-    public TransferFunctionEditor(TransferFunction tfunc, int[] histogram) {
+    public TransferFunctionEditor(TransferFunction tfunc, int[] histogram, Renderer renderer) {
+        this.renderer = renderer;
         initComponents();
 
         this.tfunc = tfunc;
@@ -183,6 +187,7 @@ public class TransferFunctionEditor extends javax.swing.JPanel {
 
     private void colorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorButtonActionPerformed
 
+        this.renderer.setInteractiveMode(true); // Keep it interactive while choosing color to avoid freezing the panel
         Color newColor = JColorChooser.showDialog(this, "Choose color", colorButton.getBackground());
         if (newColor != null) {
             colorButton.setBackground(newColor);
@@ -190,6 +195,7 @@ public class TransferFunctionEditor extends javax.swing.JPanel {
             tfunc.changed();
             tfView.repaint();
         }
+        this.renderer.setInteractiveMode(false);
 
     }//GEN-LAST:event_colorButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

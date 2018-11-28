@@ -96,7 +96,7 @@ public abstract class BaseRaycaster {
             int min_i = Math.max(-centering + i, 0);
             int min_j = Math.max(-centering + j, 0);
             int max_i = Math.min(displacement - centering + i, image.getWidth());
-            int max_j = Math.min(displacement - centering + j, image.getWidth());
+            int max_j = Math.min(displacement - centering + j, image.getHeight());
             for (int real_i = min_i; real_i < max_i; real_i++) {
                 for (int real_j = min_j; real_j < max_j; real_j++) {
                     image.setRGB(real_i, real_j, pixelColor);

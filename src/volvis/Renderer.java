@@ -6,24 +6,43 @@ package volvis;
 
 import com.jogamp.opengl.GL2;
 import java.util.ArrayList;
+
+import util.Debouncer;
 import util.TFChangeListener;
+
+import javax.swing.*;
 
 /**
  *
  * @author michel
  */
 public abstract class Renderer {
-     int winWidth, winHeight;
+    int winWidth, winHeight;
     boolean visible = false;
     boolean interactiveMode = false;
     ArrayList<TFChangeListener> listeners = new ArrayList<TFChangeListener>();
+    static int counter = 0;
+    protected Debouncer debouncer = new Debouncer(() -> {
+        counter++;
+        SwingUtilities.invokeLater(() -> {
+            interactiveMode = false;
+            for (TFChangeListener listener : listeners) {
+                listener.changed();
+            }
+        });
+    }, 2000);
 
     public Renderer() {
         
     }
 
-    public void setInteractiveMode(boolean flag) {
-        interactiveMode = flag;
+    public void setInteractiveMode(boolean interactive) {
+        if (!interactive) {
+            debouncer.call();
+        } else {
+            interactiveMode = interactive;
+            debouncer.cancel();
+        }
     }
     
     public void setWinWidth(int w) {
