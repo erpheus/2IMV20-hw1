@@ -175,7 +175,13 @@ public class Visualization implements GLEventListener, TFChangeListener {
             } else { // down
                 fov++;
             }
+            for (int i = 0; i < renderers.size(); i++) {
+                renderers.get(i).setInteractiveMode(true);
+            }
             update();
+            for (int i = 0; i < renderers.size(); i++) {
+                renderers.get(i).setInteractiveMode(false);
+            }
         }
         
     }
