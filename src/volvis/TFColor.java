@@ -28,11 +28,22 @@ public class TFColor {
         return text;
     }
 
-    public void composite(TFColor newColor) {
-
-        r = newColor.a * newColor.r + ((1-newColor.a) * r);
-        b = newColor.a * newColor.b + ((1-newColor.a) * b);
-        g = newColor.a * newColor.g + ((1-newColor.a) * g);
-
+    public void copy(TFColor copiedColor) {
+        r = copiedColor.r;
+        g = copiedColor.g;
+        b = copiedColor.b;
+        a = copiedColor.a;
     }
+
+    public void composite(TFColor newColor, double alpha) {
+        r = alpha * newColor.r + ((1-alpha) * r);
+        b = alpha * newColor.b + ((1-alpha) * b);
+        g = alpha * newColor.g + ((1-alpha) * g);
+    }
+
+    public void composite(TFColor newColor) {
+        composite(newColor, newColor.a);
+    }
+
+
 }

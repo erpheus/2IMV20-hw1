@@ -3,8 +3,8 @@ package volvis.raycasters;
 import gui.TransferFunction2DEditor;
 import util.Interpolation;
 import util.VectorMath;
+import volume.GradientVolume;
 import volume.Volume;
-import volvis.TFColor;
 import volvis.TransferFunction;
 
 import java.awt.image.BufferedImage;
@@ -12,9 +12,11 @@ import java.awt.image.BufferedImage;
 public abstract class BaseRaycaster {
     protected BufferedImage image;
     protected Volume volume;
+    protected GradientVolume gradients;
     TransferFunction tFunc;
     int displacement = 1;
     long lastRunningTime;
+    boolean shadingEnabled = false;
 
     protected static double TARGET_RENDERING_TIME = 1000.0 / 15; // 15 fps
     TransferFunction2DEditor tfEditor2D;
@@ -25,11 +27,14 @@ public abstract class BaseRaycaster {
     double volume_max;
     int image_half;
 
-    public void setUp(Volume new_volume, BufferedImage new_image, TransferFunction new_tFunc, TransferFunction2DEditor tfEditor2D) {
-        volume = new_volume;
-        image = new_image;
-        tFunc = new_tFunc;
+    public void setUp(Volume volume, BufferedImage image, TransferFunction tFunc, TransferFunction2DEditor tfEditor2D,
+                      GradientVolume gradients, boolean shadingEnabled) {
+        this.volume = volume;
+        this.gradients = gradients;
+        this.image = image;
+        this.tFunc = tFunc;
         this.tfEditor2D = tfEditor2D;
+        this.shadingEnabled = shadingEnabled;
     }
 
     void castSetUp(double[] viewMatrix) {
@@ -142,6 +147,33 @@ public abstract class BaseRaycaster {
         );
     }
 
+    double interpVoxelGradients(double[] coord) {
+        // Find the eight surrounding points
+        int x0 = (int) Math.floor(coord[0]);
+        int x1 = (int) Math.ceil(coord[0]);
+        int y0 = (int) Math.floor(coord[1]);
+        int y1 = (int) Math.ceil(coord[1]);
+        int z0 = (int) Math.floor(coord[2]);
+        int z1 = (int) Math.ceil(coord[2]);
+
+        // Interpolate
+        return Interpolation.triLerp(
+                coord[0], coord[1], coord[2],
+                getVoxelGradient(x0, y0, z0), getVoxelGradient(x0, y0, z1), getVoxelGradient(x0, y1, z0), getVoxelGradient(x0, y1, z1),
+                getVoxelGradient(x1, y0, z0), getVoxelGradient(x1, y0, z1), getVoxelGradient(x1, y1, z0), getVoxelGradient(x1, y1, z1),
+                x0, x1, y0, y1, z0, z1
+        );
+    }
+
+    double getVoxelGradient(int x, int y, int z) {
+        if (x < 0 || x >= volume.getDimX() || y < 0 || y >= volume.getDimY()
+                || z < 0 || z >= volume.getDimZ()) {
+            return 0;
+        }
+
+        return gradients.getGradient(x, y, z).mag;
+    }
+
     double calculateDistance(double[] pixelCoord, double[] uVec, double[] vVec) {
         double[] volumeCenter = new double[3];
         VectorMath.setVector(volumeCenter, volume.getDimX() / 2, volume.getDimY() / 2, volume.getDimZ() / 2);
@@ -151,5 +183,9 @@ public abstract class BaseRaycaster {
         imageCenterVec[1] = uVec[1] * (imageCenter) + vVec[1] * (imageCenter);
         imageCenterVec[2] = uVec[2] * (imageCenter) + vVec[2] * (imageCenter);
         return 2*VectorMath.distance(imageCenterVec, volumeCenter);
+    }
+
+    public void setShadingEnabled(boolean shadingEnabled) {
+        this.shadingEnabled = shadingEnabled;
     }
 }

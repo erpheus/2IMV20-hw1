@@ -45,6 +45,14 @@ public class VectorMath {
     public static double length(double[] v) {
         return Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
     }
-    
+
+    public static double[] normalizedVector(double[] vector) {
+        double size = length(vector);
+        return new double[]{vector[0]/size, vector[1]/size, vector[2]/size};
+    }
+
+    public static  double[] inverseVector(double[] vector) {
+        return new double[]{-vector[0], -vector[1], -vector[2]};
+    }
 
 }

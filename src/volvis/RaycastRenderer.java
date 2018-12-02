@@ -24,9 +24,12 @@ import java.awt.image.BufferedImage;
  */
 public class RaycastRenderer extends Renderer implements TFChangeListener {
 
-    public enum RaycasterType {Slicer, MIP, Compositing, Transfer2D};
 
+    private boolean shadingEnabled = false;
+
+    public enum RaycasterType {Slicer, MIP, Compositing, Transfer2D;};
     private Volume volume = null;
+
     private GradientVolume gradients = null;
     RaycastRendererPanel panel;
     TransferFunction tFunc;
@@ -34,7 +37,6 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     TransferFunction2DEditor tfEditor2D;
     private RaycasterType raycaster_type = RaycasterType.Slicer;
     private BaseRaycaster raycaster = null;
-    
     public RaycastRenderer() {
         panel = new RaycastRendererPanel(this);
         panel.setSpeedLabel("0");
@@ -59,19 +61,19 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         // create a standard TF where lowest intensity maps to black, the highest to white, and opacity increases
         // linearly from 0.0 to 1.0 over the intensity range
         tFunc = new TransferFunction(volume.getMinimum(), volume.getMaximum());
-        
-        // uncomment this to initialize the TF with good starting values for the orange dataset 
+
+        // uncomment this to initialize the TF with good starting values for the orange dataset
         tFunc.setTestFunc();
 
 
-        
+
         tFunc.addTFChangeListener(() -> {
             setInteractiveMode(true);
             setInteractiveMode(false);
         });
         tFunc.addTFChangeListener(this);
         tfEditor = new TransferFunctionEditor(tFunc, volume.getHistogram(), this);
-        
+
         tfEditor2D = new TransferFunction2DEditor(volume, gradients, this);
         tfEditor2D.addTFChangeListener(() -> {
             setInteractiveMode(true);
@@ -79,7 +81,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         });
         tfEditor2D.addTFChangeListener(this);
 
-        raycaster.setUp(volume, image, tFunc, tfEditor2D);
+        raycaster.setUp(volume, image, tFunc, tfEditor2D, gradients, shadingEnabled);
 
         System.out.println("Finished initialization of RaycastRenderer");
     }
@@ -108,7 +110,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
             default:
                 return;
         }
-        raycaster.setUp(volume, image, tFunc, tfEditor2D);
+        raycaster.setUp(volume, image, tFunc, tfEditor2D, gradients, shadingEnabled);
     }
 
     public RaycastRendererPanel getPanel() {
@@ -118,7 +120,7 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
     public TransferFunction2DEditor getTF2DPanel() {
         return tfEditor2D;
     }
-    
+
     public TransferFunctionEditor getTFPanel() {
         return tfEditor;
     }
@@ -234,13 +236,18 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
         }
 
     }
+
     private BufferedImage image;
     private double[] viewMatrix = new double[4 * 4];
-
     @Override
     public void changed() {
         for (int i=0; i < listeners.size(); i++) {
             listeners.get(i).changed();
         }
+    }
+
+    public void setShadingEnabled(boolean selected) {
+        this.shadingEnabled = selected;
+        this.raycaster.setShadingEnabled(this.shadingEnabled);
     }
 }
