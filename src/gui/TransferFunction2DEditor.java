@@ -31,7 +31,7 @@ public class TransferFunction2DEditor extends javax.swing.JPanel {
     private short maxIntensity;
     public double maxGradientMagnitude;
     private ArrayList<TFChangeListener> listeners = new ArrayList<TFChangeListener>();
-    private Renderer renderer;
+    protected Renderer renderer;
 
     
     public TransferFunction2DEditor(Volume volume, GradientVolume gradientvolume, Renderer renderer) {

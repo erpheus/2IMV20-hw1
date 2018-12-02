@@ -126,6 +126,7 @@ public class TransferFunction2DView extends javax.swing.JPanel {
                 ed.setSelectedInfo();
                 
                 repaint();
+                ed.changed();
             } 
         }
 
@@ -136,8 +137,10 @@ public class TransferFunction2DView extends javax.swing.JPanel {
         @Override
         public void mousePressed(MouseEvent e) {
             if (baseControlPoint.contains(e.getPoint())) {
+                ed.renderer.setInteractiveMode(true);
                 selectedBaseControlPoint = true;
             } else if (radiusControlPoint.contains(e.getPoint())) {
+                ed.renderer.setInteractiveMode(true);
                 selectedRadiusControlPoint = true;
             } else {
                 selectedRadiusControlPoint = false;
@@ -147,6 +150,7 @@ public class TransferFunction2DView extends javax.swing.JPanel {
         
         @Override
         public void mouseReleased(MouseEvent e) {
+            ed.renderer.setInteractiveMode(false);
             selectedRadiusControlPoint = false;
             selectedBaseControlPoint = false;
             ed.changed();
