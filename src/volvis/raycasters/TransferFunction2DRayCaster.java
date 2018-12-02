@@ -58,14 +58,17 @@ public class TransferFunction2DRayCaster extends BaseRaycaster {
 
                 voxelColor = new TFColor(0,0,0,1);
                 for(double k = max_k; k >= min_k; k-= displacement) {
-                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + volumeCenter[0] + k*viewVec[0];
-                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + volumeCenter[1] + k*viewVec[1];
-                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + volumeCenter[2] + k*viewVec[2];
+                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + volumeCenter[0] - k*viewVec[0];
+                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + volumeCenter[1] - k*viewVec[1];
+                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + volumeCenter[2] - k*viewVec[2];
                     double val = interpVoxels(pixelCoord);
 
+                    // Copy because we are going to modify it
                     compositingColor.copy(tfEditor2D.triangleWidget.color);
+                    compositingColor.a = alphaForGradientAndIntensity(val, interpVoxelGradients(pixelCoord));
 
                     if (shadingEnabled) {
+                        // TODO: trilerp gradients ?? Maybe round pixelCoord ??
                         if (
                                 !(pixelCoord[0] < 0) && !(pixelCoord[0] >= volume.getDimX()) &&
                                         !(pixelCoord[1] < 0) && !(pixelCoord[1] >= volume.getDimY()) &&
@@ -73,25 +76,12 @@ public class TransferFunction2DRayCaster extends BaseRaycaster {
                         ) {
                             VoxelGradient vg = gradients.getGradient((int) Math.floor(pixelCoord[0]), (int) Math.floor(pixelCoord[1]), (int) Math.floor(pixelCoord[2]));
                             double ln = vg.orientationNormDotProduct(lVector);
-                            if (!Double.isNaN(ln)) {
-                                compositingColor.r = Ka + compositingColor.r * Kd * ln + Ks * Math.pow(ln, alpha);
-                                compositingColor.g = Ka + compositingColor.g * Kd * ln + Ks * Math.pow(ln, alpha);
-                                compositingColor.b = Ka + compositingColor.b * Kd * ln + Ks * Math.pow(ln, alpha);
-                                if (Math.random() > 1.999) {
-                                    System.out.println("ln: " + ln);
-                                    System.out.println("r: " + voxelColor.r);
-                                }
-                            } else {
-                                System.out.println("ln is NAN");
-                            }
+                            compositingColor.r = Ka + compositingColor.r * Kd * ln + Ks * Math.pow(ln, alpha);
+                            compositingColor.g = Ka + compositingColor.g * Kd * ln + Ks * Math.pow(ln, alpha);
+                            compositingColor.b = Ka + compositingColor.b * Kd * ln + Ks * Math.pow(ln, alpha);
                         }
                     }
-
-                    voxelColor.composite(
-                            compositingColor,
-                            alphaForGradientAndIntensity(val, interpVoxelGradients(pixelCoord))
-                    );
-
+                    voxelColor.composite(compositingColor);
                 }
 
                 // BufferedImage expects a pixel color packed as ARGB in an int

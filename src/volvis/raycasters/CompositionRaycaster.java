@@ -28,9 +28,9 @@ public class CompositionRaycaster extends BaseRaycaster{
             for (int i = displacement/2; i < image.getWidth(); i+= displacement) {
                 voxelColor = new TFColor(0,0,0,1);
                 for(double k = max_k; k >= min_k; k-= displacement) {
-                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + volumeCenter[0] + k*viewVec[0];
-                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + volumeCenter[1] + k*viewVec[1];
-                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + volumeCenter[2] + k*viewVec[2];
+                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + volumeCenter[0] - k*viewVec[0];
+                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + volumeCenter[1] - k*viewVec[1];
+                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + volumeCenter[2] - k*viewVec[2];
                     double val = interpVoxels(pixelCoord);
                     currentVoxelColor = tFunc.getColor((int)(val));
                     voxelColor.composite(currentVoxelColor);
