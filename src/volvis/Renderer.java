@@ -30,7 +30,7 @@ public abstract class Renderer {
                 listener.changed();
             }
         });
-    }, 2000);
+    }, 5000);
 
     public Renderer() {
         
@@ -39,6 +39,15 @@ public abstract class Renderer {
     public void setInteractiveMode(boolean interactive) {
         if (!interactive) {
             debouncer.call();
+        } else {
+            interactiveMode = interactive;
+            debouncer.cancel();
+        }
+    }
+
+    public void setInteractiveMode(boolean interactive, int timeout) {
+        if (!interactive) {
+            debouncer.call(timeout);
         } else {
             interactiveMode = interactive;
             debouncer.cancel();

@@ -13,11 +13,13 @@ public class Debouncer {
         this.interval = interval;
     }
 
-    public void call() {
+    public void call() {call(interval);}
+
+    public void call(int override_interval) {
         if (current_future != null) {
-            current_future.cancel(false);
+            current_future.cancel(true);
         }
-        current_future = sched.schedule(callback, interval, TimeUnit.MILLISECONDS);
+        current_future = sched.schedule(callback, override_interval, TimeUnit.MILLISECONDS);
     }
 
     public void terminate() {
@@ -26,7 +28,7 @@ public class Debouncer {
 
     public void cancel() {
         if (current_future != null) {
-            current_future.cancel(false);
+            current_future.cancel(true);
             current_future = null;
         }
     }

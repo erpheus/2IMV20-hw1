@@ -144,7 +144,7 @@ public class Visualization implements GLEventListener, TFChangeListener {
        @Override
        public void mouseReleased(MouseEvent e) {
            for (int i = 0; i < renderers.size(); i++) {
-               renderers.get(i).setInteractiveMode(false);
+               renderers.get(i).setInteractiveMode(false, 2000);
            }
            update();
        }
@@ -180,7 +180,7 @@ public class Visualization implements GLEventListener, TFChangeListener {
             }
             update();
             for (int i = 0; i < renderers.size(); i++) {
-                renderers.get(i).setInteractiveMode(false);
+                renderers.get(i).setInteractiveMode(false, 2000);
             }
         }
         
