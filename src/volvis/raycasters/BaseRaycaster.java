@@ -5,6 +5,7 @@ import util.Interpolation;
 import util.VectorMath;
 import volume.GradientVolume;
 import volume.Volume;
+import volume.VoxelGradient;
 import volvis.TransferFunction;
 
 import java.awt.image.BufferedImage;
@@ -147,7 +148,7 @@ public abstract class BaseRaycaster {
         );
     }
 
-    double interpVoxelGradients(double[] coord) {
+    double interpVoxelGradients(double[] coord, int dim) {
         // Find the eight surrounding points
         int x0 = (int) Math.floor(coord[0]);
         int x1 = (int) Math.ceil(coord[0]);
@@ -159,19 +160,29 @@ public abstract class BaseRaycaster {
         // Interpolate
         return Interpolation.triLerp(
                 coord[0], coord[1], coord[2],
-                getVoxelGradient(x0, y0, z0), getVoxelGradient(x0, y0, z1), getVoxelGradient(x0, y1, z0), getVoxelGradient(x0, y1, z1),
-                getVoxelGradient(x1, y0, z0), getVoxelGradient(x1, y0, z1), getVoxelGradient(x1, y1, z0), getVoxelGradient(x1, y1, z1),
+                getVoxelGradient(x0, y0, z0, dim), getVoxelGradient(x0, y0, z1, dim), getVoxelGradient(x0, y1, z0, dim), getVoxelGradient(x0, y1, z1, dim),
+                getVoxelGradient(x1, y0, z0, dim), getVoxelGradient(x1, y0, z1, dim), getVoxelGradient(x1, y1, z0, dim), getVoxelGradient(x1, y1, z1, dim),
                 x0, x1, y0, y1, z0, z1
         );
     }
 
-    double getVoxelGradient(int x, int y, int z) {
+    double getVoxelGradient(int x, int y, int z, int dim) {
         if (x < 0 || x >= volume.getDimX() || y < 0 || y >= volume.getDimY()
                 || z < 0 || z >= volume.getDimZ()) {
             return 0;
         }
 
-        return gradients.getGradient(x, y, z).mag;
+        VoxelGradient vg = gradients.getGradient(x, y, z);
+        switch (dim) {
+            case 0:
+                return vg.x;
+            case 1:
+                return vg.y;
+            case 2:
+                return vg.z;
+            default:
+                return 0;
+        }
     }
 
     double calculateDistance(double[] pixelCoord, double[] uVec, double[] vVec) {

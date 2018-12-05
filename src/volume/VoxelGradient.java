@@ -24,6 +24,11 @@ public class VoxelGradient {
         mag = (float) Math.sqrt(x*x + y*y + z*z);
     }
 
+    public double calc_mag(){
+        mag = (float)Math.sqrt(x*x + y*y + z*z);
+        return mag;
+    }
+
     public double orientationNormDotProduct(double[] otherVector) {
         if (mag == 0) {
             return 0;

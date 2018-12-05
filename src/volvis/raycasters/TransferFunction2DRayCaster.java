@@ -50,6 +50,7 @@ public class TransferFunction2DRayCaster extends BaseRaycaster {
         TFColor voxelColor;
         TFColor compositingColor = new TFColor();
         double[] lVector = normalizedVector(inverseVector(viewVec));
+        VoxelGradient gradient = new VoxelGradient();
         double max_k = +1 * (maximumSteps / 2) - displacement/2 ;
         double min_k = displacement/2 + (-1 * (maximumSteps / 2));
 
@@ -65,17 +66,15 @@ public class TransferFunction2DRayCaster extends BaseRaycaster {
 
                     // Copy because we are going to modify it
                     compositingColor.copy(tfEditor2D.triangleWidget.color);
-                    compositingColor.a = alphaForGradientAndIntensity(val, interpVoxelGradients(pixelCoord));
+                    gradient.x = (float)interpVoxelGradients(pixelCoord, 0);
+                    gradient.y = (float)interpVoxelGradients(pixelCoord, 1);
+                    gradient.z = (float)interpVoxelGradients(pixelCoord, 2);
+                    double mag = gradient.calc_mag();
+                    compositingColor.a = alphaForGradientAndIntensity(val, mag);
 
                     if (shadingEnabled) {
-                        // TODO: trilerp gradients ?? Maybe round pixelCoord ??
-                        if (
-                                !(pixelCoord[0] < 0) && !(pixelCoord[0] >= volume.getDimX()) &&
-                                        !(pixelCoord[1] < 0) && !(pixelCoord[1] >= volume.getDimY()) &&
-                                        !(pixelCoord[2] < 0) && !(pixelCoord[2] >= volume.getDimZ())
-                        ) {
-                            VoxelGradient vg = gradients.getGradient((int) Math.floor(pixelCoord[0]), (int) Math.floor(pixelCoord[1]), (int) Math.floor(pixelCoord[2]));
-                            double ln = vg.orientationNormDotProduct(lVector);
+                        if ( mag > 0 ) {
+                            double ln = gradient.orientationNormDotProduct(lVector);
                             compositingColor.r = Ka + compositingColor.r * Kd * ln + Ks * Math.pow(ln, alpha);
                             compositingColor.g = Ka + compositingColor.g * Kd * ln + Ks * Math.pow(ln, alpha);
                             compositingColor.b = Ka + compositingColor.b * Kd * ln + Ks * Math.pow(ln, alpha);
