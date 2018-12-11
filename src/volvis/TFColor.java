@@ -45,5 +45,11 @@ public class TFColor {
         composite(newColor, newColor.a);
     }
 
+    public double compositeAdd(TFColor newColor, double alpha, double remaining) {
+        r += remaining * alpha * newColor.r;
+        b += remaining * alpha * newColor.b;
+        g += remaining * alpha * newColor.g;
+        return remaining - (remaining * alpha);
+    }
 
 }

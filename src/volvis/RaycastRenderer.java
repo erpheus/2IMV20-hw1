@@ -26,6 +26,18 @@ public class RaycastRenderer extends Renderer implements TFChangeListener {
 
 
     private boolean shadingEnabled = false;
+    private boolean frontToBackEnabled = false;
+    private double frontToBackCutoff = 0.99;
+
+    public void setFrontToBackEnabled(boolean selected) {
+        this.frontToBackEnabled = selected;
+        this.raycaster.setFrontToBackEnabled(this.frontToBackEnabled);
+    }
+
+    public void setFrontToBackCutoff(double value) {
+        this.frontToBackCutoff = value;
+        this.raycaster.setFrontToBackCutoff(this.frontToBackCutoff);
+    }
 
     public enum RaycasterType {Slicer, MIP, Compositing, Transfer2D;};
     private Volume volume = null;

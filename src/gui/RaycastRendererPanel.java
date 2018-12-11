@@ -7,6 +7,8 @@ package gui;
 import javax.swing.JOptionPane;
 import volvis.RaycastRenderer;
 
+import java.awt.event.ActionEvent;
+
 /**
  *
  * @author michel
@@ -47,8 +49,12 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
         compositingButton = new javax.swing.JRadioButton();
         tf2dButton = new javax.swing.JRadioButton();
         shadingCheckbox = new javax.swing.JCheckBox();
+        frontToBackCheckbox = new javax.swing.JCheckBox();
+        jLabelCutoff = new javax.swing.JLabel();
+        cutoffLabel = new javax.swing.JTextField();
 
         jLabel1.setText("Rendering time (ms):");
+        jLabelCutoff.setText("cutoff");
 
         renderingSpeedLabel.setText("jLabel2");
 
@@ -92,6 +98,14 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
             }
         });
 
+        frontToBackCheckbox.setText("Front to back ray-tracing");
+        frontToBackCheckbox.addActionListener(evt -> frontToBackActionPerformed(evt));
+
+        cutoffLabel.setMaximumSize(new java.awt.Dimension(84, 24));
+        cutoffLabel.setMinimumSize(new java.awt.Dimension(84, 24));
+        cutoffLabel.setText("0.99");
+        cutoffLabel.addActionListener(evt -> cutoffLabelActionPerformed(evt));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -108,7 +122,11 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
                         .addComponent(tf2dButton)
                         .addComponent(mipButton)
                         .addComponent(slicerButton)
-                        .addComponent(shadingCheckbox)))
+                        .addComponent(shadingCheckbox)
+                        .addComponent(frontToBackCheckbox)
+                        .addComponent(jLabelCutoff)
+                        .addComponent(cutoffLabel)
+                    ))
                 .addContainerGap(339, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -128,9 +146,28 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
                 .addComponent(tf2dButton)
                 .addGap(18, 18, 18)
                 .addComponent(shadingCheckbox)
+                .addGap(18, 18, 18)
+                .addComponent(frontToBackCheckbox)
+                .addGap(18, 18, 18)
+                .addComponent(jLabelCutoff)
+                .addComponent(cutoffLabel)
                 .addContainerGap(137, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cutoffLabelActionPerformed(ActionEvent evt) {
+        double value = 0.99;
+        try {
+            value = Double.parseDouble(cutoffLabel.getText());
+        } catch (NumberFormatException ignored) { }
+        renderer.setFrontToBackCutoff(value);
+        renderer.changed();
+    }
+
+    private void frontToBackActionPerformed(ActionEvent evt) {
+        renderer.setFrontToBackEnabled(frontToBackCheckbox.isSelected());
+        renderer.changed();
+    }
 
     private void mipButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mipButtonActionPerformed
         renderer.setRenderer(RaycastRenderer.RaycasterType.MIP);
@@ -166,5 +203,8 @@ public class RaycastRendererPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox shadingCheckbox;
     private javax.swing.JRadioButton slicerButton;
     private javax.swing.JRadioButton tf2dButton;
+    private javax.swing.JCheckBox frontToBackCheckbox;
+    private javax.swing.JLabel jLabelCutoff;
+    private javax.swing.JTextField cutoffLabel;
     // End of variables declaration//GEN-END:variables
 }

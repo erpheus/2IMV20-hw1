@@ -38,7 +38,10 @@ public class TransferFunction2DRayCaster extends BaseRaycaster {
 
     @Override
     public void internal_cast(double[] viewMatrix) {
-        castSetUp(viewMatrix);
+        double factor = 1.0;
+        if (frontToBackEnabled) {
+            factor = -1.0;
+        }
 
         double Ka = 0.1, Kd = 0.7, Ks = 0.2, alpha = 10;
 
@@ -58,10 +61,12 @@ public class TransferFunction2DRayCaster extends BaseRaycaster {
             for (int i = displacement/2; i < image.getWidth(); i+= displacement) {
 
                 voxelColor = new TFColor(0,0,0,1);
+                double remaining = 1;
+
                 for(double k = max_k; k >= min_k; k-= displacement) {
-                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + volumeCenter[0] - k*viewVec[0];
-                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + volumeCenter[1] - k*viewVec[1];
-                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + volumeCenter[2] - k*viewVec[2];
+                    pixelCoord[0] = uVec[0] * (i - imageCenter) + vVec[0] * (j - imageCenter) + volumeCenter[0] - factor*k*viewVec[0];
+                    pixelCoord[1] = uVec[1] * (i - imageCenter) + vVec[1] * (j - imageCenter) + volumeCenter[1] - factor*k*viewVec[1];
+                    pixelCoord[2] = uVec[2] * (i - imageCenter) + vVec[2] * (j - imageCenter) + volumeCenter[2] - factor*k*viewVec[2];
                     double val = interpVoxels(pixelCoord);
 
                     // Copy because we are going to modify it
@@ -80,7 +85,15 @@ public class TransferFunction2DRayCaster extends BaseRaycaster {
                             compositingColor.b = Ka + compositingColor.b * Kd * ln + Ks * Math.pow(ln, alpha);
                         }
                     }
-                    voxelColor.composite(compositingColor);
+
+                    if (frontToBackEnabled) {
+                        remaining = voxelColor.compositeAdd(compositingColor, compositingColor.a, remaining);
+                        if (remaining < 1 - frontToBackCutoff) {
+                            break;
+                        }
+                    } else {
+                        voxelColor.composite(compositingColor);
+                    }
                 }
 
                 // BufferedImage expects a pixel color packed as ARGB in an int

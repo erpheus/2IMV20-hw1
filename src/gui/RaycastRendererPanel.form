@@ -127,5 +127,29 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="shadingCheckboxActionPerformed"/>
       </Events>
     </Component>
+    <Component class="javax.swing.JCheckBox" name="frontToBackCheckbox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Front to back rendering"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="frontToBackActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabelCutoff">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Cutoff"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="cutoffLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jTextField2"/>
+        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[84, 28]"/>
+        </Property>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cutoffLabelActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

@@ -18,6 +18,8 @@ public abstract class BaseRaycaster {
     int displacement = 1;
     long lastRunningTime;
     boolean shadingEnabled = false;
+    boolean frontToBackEnabled = false;
+    double frontToBackCutoff = 0.99;
 
     protected static double TARGET_RENDERING_TIME = 1000.0 / 15; // 15 fps
     TransferFunction2DEditor tfEditor2D;
@@ -198,5 +200,13 @@ public abstract class BaseRaycaster {
 
     public void setShadingEnabled(boolean shadingEnabled) {
         this.shadingEnabled = shadingEnabled;
+    }
+
+    public void setFrontToBackEnabled(boolean frontToBackEnabled) {
+        this.frontToBackEnabled = frontToBackEnabled;
+    }
+
+    public void setFrontToBackCutoff(double frontToBackCutoff) {
+        this.frontToBackCutoff = frontToBackCutoff;
     }
 }
